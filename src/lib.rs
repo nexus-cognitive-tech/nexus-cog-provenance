@@ -12,4 +12,6 @@ pub mod record;
 pub mod schema;
 pub mod trace;
 
+pub use explain::ProvenanceExplainer;
 pub use graph::ProvenanceGraphEngine;
+pub use query::ProvenanceQueryEngine;
