@@ -79,7 +79,7 @@ mod tests {
 
     #[test]
     fn search_finds_by_artifact() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         e.add_record(rec("src/lib.rs", "claude", ProvenanceSource::ModelOutput));
         e.add_record(rec("src/main.rs", "claude", ProvenanceSource::ModelOutput));
         e.add_record(rec("Cargo.toml", "tool", ProvenanceSource::ToolExecution));
@@ -90,7 +90,7 @@ mod tests {
 
     #[test]
     fn by_source_filters() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         e.add_record(rec("a", "model", ProvenanceSource::ModelOutput));
         e.add_record(rec("b", "tool", ProvenanceSource::ToolExecution));
         let q = ProvenanceQueryEngine::new(e);

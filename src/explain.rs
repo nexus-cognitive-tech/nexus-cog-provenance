@@ -134,7 +134,7 @@ mod tests {
 
     #[test]
     fn explain_chain_returns_string() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         let r = ProvenanceRecord::new("f.rs", ProvenanceSource::ModelOutput, "model", "p", "c", "g");
         let id = r.id.clone();
         e.add_record(r);
@@ -146,7 +146,7 @@ mod tests {
 
     #[test]
     fn one_line_includes_origin() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         let r = ProvenanceRecord::new("f.rs", ProvenanceSource::ModelOutput, "claude-opus-4", "p", "c", "g");
         let id = r.id.clone();
         e.add_record(r);

@@ -86,7 +86,7 @@ mod tests {
 
     #[test]
     fn chain_to_walks_full_history() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         e.add_record(rec("a", "f"));
         e.add_record(rec("b", "f"));
         e.add_record(rec("c", "f"));
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn depth_counts_ancestors() {
-        let mut e = ProvenanceGraphEngine::new();
+        let mut e = ProvenanceGraphEngine::in_memory().unwrap();
         e.add_record(rec("a", "f"));
         e.add_record(rec("b", "f"));
         e.add_record(rec("c", "f"));
