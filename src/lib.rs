@@ -11,3 +11,5 @@ pub mod query;
 pub mod record;
 pub mod schema;
 pub mod trace;
+
+pub use graph::ProvenanceGraphEngine;
