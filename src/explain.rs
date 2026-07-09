@@ -75,6 +75,14 @@ impl ProvenanceExplainer {
         }
     }
 
+    /// Format a single record as a human-readable bullet block. Exposed for
+    /// callers (e.g. the CLI's `provenance_explain`) that need to render a
+    /// record outside of the full chain explanation.
+    #[must_use]
+    pub fn format_record_human(&self, r: &nexus_cog_core::provenance::ProvenanceRecord) -> String {
+        self.format_record(r)
+    }
+
     fn format_record(&self, r: &nexus_cog_core::provenance::ProvenanceRecord) -> String {
         format!(
             "- **{}** ({})\n  - origin: `{}`\n  - agent: `{}`\n  - timestamp: `{}`\n  - confidence: `{}`\n  - prompt: `{}`",
