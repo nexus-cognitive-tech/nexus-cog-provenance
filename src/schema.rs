@@ -5,9 +5,12 @@ use nexus_cog_core::provenance::{
 };
 use nexus_cog_storage::{PersistenceBackend, SqlValue, StorageResult};
 
+/// Owner identifier for schema migrations.
 pub const OWNER: &str = "nexus_cog_provenance";
+/// Current schema version.
 pub const SCHEMA_VERSION: i32 = 1;
 
+/// SQL DDL for the provenance tables.
 pub const SCHEMA_SQL: &str = r#"
 CREATE TABLE IF NOT EXISTS provenance_records (
     id           TEXT PRIMARY KEY,
@@ -36,10 +39,12 @@ CREATE TABLE IF NOT EXISTS provenance_edges (
 );
 "#;
 
+/// Run schema migrations on the given backend.
 pub fn register(backend: &dyn PersistenceBackend) -> StorageResult<()> {
     backend.apply_migrations(OWNER, SCHEMA_VERSION, SCHEMA_SQL)
 }
 
+/// Insert or update a provenance record.
 pub fn upsert_record(backend: &dyn PersistenceBackend, r: &ProvenanceRecord) -> StorageResult<()> {
     let parent = r.parent.clone().unwrap_or_default();
     let children_joined = r.children.join(",");
@@ -69,6 +74,7 @@ pub fn upsert_record(backend: &dyn PersistenceBackend, r: &ProvenanceRecord) -> 
     Ok(())
 }
 
+/// Insert or update a provenance edge.
 pub fn upsert_edge(
     backend: &dyn PersistenceBackend,
     from: &str,
@@ -87,6 +93,7 @@ pub fn upsert_edge(
     Ok(())
 }
 
+/// Load every provenance record from the database.
 pub fn load_all_records(backend: &dyn PersistenceBackend) -> StorageResult<Vec<ProvenanceRecord>> {
     let rows = backend.fetch_all(
         "SELECT id, artifact, source, origin, parent, children, prompt, content, content_hash, agent, confidence, timestamp \
@@ -96,6 +103,7 @@ pub fn load_all_records(backend: &dyn PersistenceBackend) -> StorageResult<Vec<P
     rows.into_iter().map(row_to_record).collect()
 }
 
+/// Load every provenance edge from the database.
 pub fn load_all_edges(backend: &dyn PersistenceBackend) -> StorageResult<Vec<ProvenanceEdge>> {
     let rows = backend.fetch_all(
         "SELECT from_record, to_record, edge_type FROM provenance_edges ORDER BY from_record, to_record",
@@ -201,6 +209,7 @@ fn parse_edge_type(s: &str) -> Option<ProvenanceEdgeType> {
     })
 }
 
+/// Take a point-in-time snapshot of the entire provenance graph.
 pub fn snapshot(backend: &dyn PersistenceBackend) -> StorageResult<ProvenanceGraph> {
     let records = load_all_records(backend)?;
     let edges = load_all_edges(backend)?;

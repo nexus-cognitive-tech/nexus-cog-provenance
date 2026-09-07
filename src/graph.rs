@@ -18,6 +18,7 @@ struct Inner {
 }
 
 #[derive(Clone)]
+/// Provenance graph engine backed by a persistence backend.
 pub struct ProvenanceGraphEngine {
     backend: Arc<dyn PersistenceBackend>,
     inner: Arc<RwLock<Inner>>,
@@ -268,24 +269,29 @@ impl ProvenanceGraphEngine {
     }
 }
 
+/// Read-only guard over the provenance graph.
 pub struct ProvenanceGraphReadGuard<'a> {
     inner: parking_lot::RwLockReadGuard<'a, Inner>,
 }
 
 impl<'a> ProvenanceGraphReadGuard<'a> {
-    #[must_use]
+    /// Return a reference to the underlying petgraph.
+    #[must_use = "returns graph reference"]
     pub fn graph(&self) -> &DiGraph<ProvenanceRecord, ProvenanceEdgeType> {
         &self.inner.graph
     }
-    #[must_use]
+    /// Iterator over internal node indices.
+    #[must_use = "iterator is lazy — collect or advance to use"]
     pub fn node_indices(&self) -> impl Iterator<Item = NodeIndex> + '_ {
         self.inner.graph.node_indices()
     }
-    #[must_use]
+    /// Look up a node's weight by graph index.
+    #[must_use = "returns optional record reference"]
     pub fn graph_weight(&self, idx: NodeIndex) -> Option<&ProvenanceRecord> {
         self.inner.graph.node_weight(idx)
     }
-    #[must_use]
+    /// Find the graph index for a string id.
+    #[must_use = "returns optional node index"]
     pub fn index_of(&self, id: &str) -> Option<NodeIndex> {
         self.inner.index.get(id).copied()
     }
